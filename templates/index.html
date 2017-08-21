@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>innRoad SAML / AWS Credential Vending Machine!</title>
+
+    <script type="text/javascript" src="static/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/clipboard.min.js"></script>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/jumbotron-narrow.css" rel="stylesheet">
+  </head>
+ 
+  <body>
+ 
+  <div class="wrapper">
+    <form id="form-signin" action="javascript:void(0);"  class="form-signin">       
+      <h2 class="form-signin-heading">Please login</h2>
+      <input type="text" id="username" class="form-control" name="username" placeholder="Email Address" required="" autofocus="" />
+      <input type="password" id="password" class="form-control" name="password" placeholder="Password" required=""/>      
+      <button id="login" name="login" class="btn btn-lg btn-primary btn-block" type="submit">Login</button>   
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="bsModal3" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="mySmallModalLabel">Your credentials</h4>
+        </div>
+        <br />
+        <div class="modal-body" id="response-model">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon">AccessKey</span>
+          <input type="text" class="form-control" id="AccessKey">
+          <span class="input-group-btn">
+              <button type="button" class="btn btn-copy" id="btn-accesskey-copy" data-clipboard-target="#AccessKey" data-clipboard-action="copy">Copy</button>
+          </span>
+        </div>
+        <br />
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon">SecretKey</span>
+          <input type="text" class="form-control" id="SecretKey">
+          <span class="input-group-btn">
+              <button type="button" class="btn btn-copy" id="btn-secretkey-copy" data-clipboard-target="#SecretKey" data-clipboard-action="copy">Copy</button>
+          </span>
+        </div>
+        <br />
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon">SessionToken</span>
+          <input type="text" class="form-control" id="SessionToken">
+          <span class="input-group-btn">
+              <button type="button" class="btn btn-copy" id="btn-sessiontoken-copy" data-clipboard-target="#SessionToken" data-clipboard-action="copy">Copy</button>
+          </span>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script type="text/javascript">
+    var btn = document.getElementsByClassName("btn-copy");
+    var clipboard = new Clipboard(btn);
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+        $(function() {
+            $('#form-signin').submit(function() {     
+                $.ajax({
+                    url: 'login',
+                    data: $('form').serialize(),
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(returndata) {
+                      $("#AccessKey").val(returndata.AccessKey);
+                      $("#SecretKey").val(returndata.SecretKey);
+                      $("#SessionToken").val(returndata.SessionToken);
+                      $("#bsModal3").modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+  </body>
+</html>
